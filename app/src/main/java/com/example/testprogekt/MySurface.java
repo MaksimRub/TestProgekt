@@ -87,8 +87,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
             rotation_degrees+=2;
         }
-        //x += image.getWidth() / 2;
-        //y += image.getHeight() / 2;
+        x += image.getWidth() / 2;
+        y += image.getHeight() / 2;
         canvas.rotate(rotation_degrees, x , y );
         canvas.drawBitmap(image, x, y, paint);
         //canvas.drawBitmap(image_type,x,0,paint);
@@ -96,8 +96,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.restore();
         calculate();
         
-        //x += dx;
-        //y += dy;
+        x += dx;
+        y += dy;
 
 
 
