@@ -21,15 +21,15 @@ import android.widget.Button;
 public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     //Переменные для рисования
     float x, y; //текущее положение картинки
-    float tx, ty; //точки касания
+    double tx, ty; //точки касания
     float dx, dy; //смещение координат
     float koeff; //коэффициент скорости
 
     Path path;
 
-    int rotation_degrees=0;
+   double rotation_degrees=0;
 
-    int x1,y1;
+    double x1,y1;
 
     Rect rect;
 
@@ -40,6 +40,9 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     //объект потока
     DrawThread drawThread;
+    int i;
+
+
 
 
 
@@ -47,10 +50,11 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
 
         getHolder().addCallback(this);
-        x = 100;
-        y = 100;
-        x1 = 500;
-        y1 = 0;
+        i=0;
+        x = 400;
+        y = 400;
+        x1=400;
+        y1=-1000;
         koeff = 2;
         res = getResources();
         image = BitmapFactory.decodeResource(res, R.drawable.car);
@@ -58,6 +62,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         paint = new Paint();
         rect=new Rect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1);
+        path=new Path();
     }
 
     @Override
@@ -85,19 +90,47 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawRect(r,paint);
 
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
-            rotation_degrees+=2;
+            rotation_degrees+=1;
+            i++;
         }
-        x += image.getWidth() / 2;
-        y += image.getHeight() / 2;
-        canvas.rotate(rotation_degrees, x , y );
+        //x += image.getWidth() / 2;
+        //y += image.getHeight() / 2;
+
+        //
+        paint.setColor(Color.BLUE);
+        canvas.drawCircle(x+image.getWidth() / 2,y+image.getHeight() / 2,400,paint);
+        double cos=Math.cos(rotation_degrees);
+        double sin=Math.sin(rotation_degrees);
+
+        x1=(x+image.getWidth() / 2)+400*cos;
+        y1=(y+image.getHeight() / 2)+400*sin;
+        //double[] points=pointsOnCircle(x+image.getWidth() / 2,y+image.getHeight() / 2);
+
+        paint.setColor(Color.RED);
+        path.moveTo(x+image.getWidth() / 2,y+image.getHeight() / 2);
+        path.lineTo((float) x1,(float) y1);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawPath(path,paint);
+        canvas.drawCircle((float) x1,(float)y1,20,paint);
+        canvas.rotate((float) rotation_degrees, x+image.getWidth() / 2 , y+image.getHeight() / 2 );
         canvas.drawBitmap(image, x, y, paint);
-        //canvas.drawBitmap(image_type,x,0,paint);
         canvas.save();
         canvas.restore();
-        calculate();
         
-        x += dx;
-        y += dy;
+
+        calculate();
+
+        //x += dx;
+        //y += dy;
+
+
+
+        //calculate();
+        //int x2=canvas.getClipBounds().describeContents();
+       // int y2=canvas.getClipBounds().centerY();
+
+        //x += dx;
+        //y += dy;
 
 
 
@@ -133,6 +166,15 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         double g = Math.sqrt((x1-x)*(x1-x)+(y1-y)*(y1-y));
         dx = (float) (koeff*(x1-x)/g);
         dy = (float) (koeff*(y1-y)/g);
+    }
+    private double[] pointsOnCircle(double begin_x,double begin_y){
+        double[] a=new double[360];
+        int i=0;
+        for (int j = 0; j < 360; j++) {
+            double x_point=(begin_x)+400*Math.cos(j);
+            double y_point=(begin_y)+400*Math.sin(j);
+        }
+        return a;
     }
 
     @Override
