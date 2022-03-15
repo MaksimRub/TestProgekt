@@ -167,7 +167,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         dx = (float) (koeff*(x1-x)/g);
         dy = (float) (koeff*(y1-y)/g);
     }
-    private double[] pointsOnCircle(double begin_x,double begin_y){
+    /*private double[] pointsOnCircle(double begin_x,double begin_y){
         double[] a=new double[360];
         int i=0;
         for (int j = 0; j < 360; j++) {
@@ -175,7 +175,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             double y_point=(begin_y)+400*Math.sin(j);
         }
         return a;
-    }
+    }*/
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
