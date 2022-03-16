@@ -27,7 +27,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     Path path;
 
-   double rotation_degrees=0;
+   double rotation_degrees=90;
 
     double x1,y1;
 
@@ -91,37 +91,47 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
             rotation_degrees+=1;
-            i++;
         }
         //x += image.getWidth() / 2;
         //y += image.getHeight() / 2;
 
         //
-        paint.setColor(Color.BLUE);
-        canvas.drawCircle(x+image.getWidth() / 2,y+image.getHeight() / 2,400,paint);
-        double cos=Math.cos(rotation_degrees);
-        double sin=Math.sin(rotation_degrees);
+
+        //paint.setColor(Color.BLUE);
+        //canvas.drawCircle(x+image.getWidth() / 2,y+image.getHeight()/2,400,paint);
+        double cos;
+        double sin;
+        double radian=Math.toRadians(rotation_degrees-90);
+        cos= Math.cos(radian);
+        sin= Math.sin(radian);
+
+
 
         x1=(x+image.getWidth() / 2)+400*cos;
-        y1=(y+image.getHeight() / 2)+400*sin;
+        y1=(y)+400*sin;
+        //x1=(x)+400*cos;
+        //y1=(y)+400*sin;
         //double[] points=pointsOnCircle(x+image.getWidth() / 2,y+image.getHeight() / 2);
 
         paint.setColor(Color.RED);
-        path.moveTo(x+image.getWidth() / 2,y+image.getHeight() / 2);
+        path.moveTo(x+image.getWidth()/2,y+image.getHeight()/2);
         path.lineTo((float) x1,(float) y1);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path,paint);
-        canvas.drawCircle((float) x1,(float)y1,20,paint);
-        canvas.rotate((float) rotation_degrees, x+image.getWidth() / 2 , y+image.getHeight() / 2 );
+        //canvas.drawCircle((float) x1,(float)y1,20,paint);
+        calculate();
+        x += dx;
+        y += dy;
+        canvas.rotate((float) rotation_degrees, x+image.getWidth() / 2 , y+image.getHeight()/2 );
         canvas.drawBitmap(image, x, y, paint);
         canvas.save();
         canvas.restore();
+
+
+
         
 
-        calculate();
 
-        //x += dx;
-        //y += dy;
 
 
 
