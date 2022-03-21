@@ -103,6 +103,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         HashMap<String,Integer> coord=new HashMap<>();
 
 
+
         paint.setColor(Color.RED);
         canvas.drawRect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1,paint);
@@ -132,7 +133,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         //canvas.drawPath(path,paint);
         //canvas.drawCircle((float) x1,(float)y1,20,paint);
         //Rect r=new Rect((int)x,(int) y,(int) x+image.getHeight(),(int)y+image.getWidth());
-        Rect r=new Rect(200,200,200+image.getHeight(),200+image.getWidth());
+        Rect r=new Rect((int) x,(int) y,(int) x+image.getHeight(),(int) y+image.getWidth());
 
 
         calculate();
@@ -142,27 +143,11 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawBitmap(image, x, y, paint);
         canvas.save();
         canvas.restore();
-
-
-        //float middle_x=x+image.getWidth()/2;
-        //float middle_y=y+image.getHeight()/2;
-        float middle_x=x+image.getWidth()/2;
-        float middle_y=y+image.getHeight()/2;
-        /*paint.setColor(Color.RED);
-        canvas.rotate((float) rotation_degrees, 200+image.getWidth() / 2 , 200+image.getHeight()/2 );
-        canvas.drawRect(r,paint);
-        canvas.save();
-        canvas.restore();*/
-
-
-        for (int i = (int) x; i <= y+image.getHeight(); i++) {
+        for (int i = (int) x; i <= x+image.getHeight(); i++) {
             for (int j = (int) y; j <= y+image.getWidth(); j++) {
-                double radius=Math.sqrt((i-middle_x)*(i-middle_x)+(j-middle_y)*(j-middle_y));
-                double i1=((i)+radius*Math.cos(radian));
-                double j1=((j)+radius*Math.sin(radian));
                 paint.setColor(Color.YELLOW);
-                canvas.drawPoint((float) i1,(float) j1,paint);
-                int a = image_need_road.getPixel((int)i1,(int) j1);
+                //canvas.drawPoint((float) i,(float) j,paint);
+                int a = image_need_road.getPixel((int)i,(int) j);
                 if (a == -8248799) {
                     x=400;
                     y=400;
@@ -170,6 +155,22 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
         }
+
+
+
+        //float middle_x=x+image.getWidth()/2;
+        //float middle_y=y+image.getHeight()/2;
+
+        //paint.setColor(Color.RED);
+        //canvas.drawRect(r,paint);
+        //canvas.rotate((float) rotation_degrees, 200+image.getWidth() / 2 , 200+image.getHeight()/2 );
+
+        //canvas.save();
+        //canvas.restore();
+
+
+
+
 
         /*double radius=Math.sqrt((206-middle_x)*(206-middle_x)+(205-middle_y)*(205-middle_y));
         paint.setColor(Color.BLUE);
