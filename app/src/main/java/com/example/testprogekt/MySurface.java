@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -17,6 +18,11 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+
+import androidx.annotation.RequiresApi;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     //Переменные для рисования
@@ -27,20 +33,22 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     Path path;
 
-   double rotation_degrees=90;
+   double rotation_degrees=0;
 
     double x1,y1;
 
     Rect rect;
 
     //переменные для картинки
-    Bitmap image,image_type;
+    Bitmap image,image_real_road,image_need_road;
     Resources res;
     Paint paint;
 
     //объект потока
     DrawThread drawThread;
-    int i;
+
+
+
 
 
 
@@ -50,19 +58,21 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
 
         getHolder().addCallback(this);
-        i=0;
+
         x = 400;
         y = 400;
-        x1=400;
-        y1=-1000;
+
         koeff = 2;
         res = getResources();
         image = BitmapFactory.decodeResource(res, R.drawable.car);
-        image_type=BitmapFactory.decodeResource(res, R.drawable.img);
+        image_real_road=BitmapFactory.decodeResource(res, R.drawable.firstroad);
         paint = new Paint();
         rect=new Rect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1);
         path=new Path();
+        x1=(x+image.getWidth() / 2)+400000*Math.cos(Math.toRadians(rotation_degrees-90));
+        y1=(y)+400000*Math.sin(Math.toRadians(rotation_degrees-90));
+
     }
 
     @Override
@@ -81,44 +91,50 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         return true;
     }
 
+
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
-        paint.setColor(Color.RED);
-        Rect r=new Rect(getWidth()-getWidth()/4,
-                getHeight()-getHeight()/8,getWidth()-1,getHeight()-1);
-        canvas.drawRect(r,paint);
+        int wi=canvas.getWidth();
+        int he=canvas.getHeight();
+        image_need_road=Bitmap.createScaledBitmap(image_real_road,wi,he,false);
 
+        canvas.drawBitmap(image_need_road,0,0,paint);
+        HashMap<String,Integer> coord=new HashMap<>();
+
+
+        paint.setColor(Color.RED);
+        canvas.drawRect(getWidth()-getWidth()/4,
+                getHeight()-getHeight()/8,getWidth()-1,getHeight()-1,paint);
+
+
+        double radian=Math.toRadians(rotation_degrees+270);
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
-            rotation_degrees+=1;
+            rotation_degrees+=2;
+
+            x1=(x+image.getWidth() / 2)+400000*Math.cos(radian);
+            y1=(y)+400000*Math.sin(radian);
+
         }
-        //x += image.getWidth() / 2;
-        //y += image.getHeight() / 2;
-
-        //
-
-        //paint.setColor(Color.BLUE);
-        //canvas.drawCircle(x+image.getWidth() / 2,y+image.getHeight()/2,400,paint);
-        double cos;
-        double sin;
-        double radian=Math.toRadians(rotation_degrees-90);
-        cos= Math.cos(radian);
-        sin= Math.sin(radian);
+        //canvas.drawCircle((float) x1,(float) y1,10,paint);
 
 
 
-        x1=(x+image.getWidth() / 2)+400*cos;
-        y1=(y)+400*sin;
-        //x1=(x)+400*cos;
-        //y1=(y)+400*sin;
-        //double[] points=pointsOnCircle(x+image.getWidth() / 2,y+image.getHeight() / 2);
 
-        paint.setColor(Color.RED);
-        path.moveTo(x+image.getWidth()/2,y+image.getHeight()/2);
-        path.lineTo((float) x1,(float) y1);
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawPath(path,paint);
+
+
+
+
+        //paint.setColor(Color.RED);
+        //path.moveTo(0,50);
+        //path.lineTo(1000,50);
+       //paint.setStyle(Paint.Style.STROKE);
+        //canvas.drawPath(path,paint);
         //canvas.drawCircle((float) x1,(float)y1,20,paint);
+        //Rect r=new Rect((int)x,(int) y,(int) x+image.getHeight(),(int)y+image.getWidth());
+        Rect r=new Rect(200,200,200+image.getHeight(),200+image.getWidth());
+
+
         calculate();
         x += dx;
         y += dy;
@@ -128,48 +144,41 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.restore();
 
 
-
-        
-
-
-
-
-
-        //calculate();
-        //int x2=canvas.getClipBounds().describeContents();
-       // int y2=canvas.getClipBounds().centerY();
-
-        //x += dx;
-        //y += dy;
+        //float middle_x=x+image.getWidth()/2;
+        //float middle_y=y+image.getHeight()/2;
+        float middle_x=x+image.getWidth()/2;
+        float middle_y=y+image.getHeight()/2;
+        /*paint.setColor(Color.RED);
+        canvas.rotate((float) rotation_degrees, 200+image.getWidth() / 2 , 200+image.getHeight()/2 );
+        canvas.drawRect(r,paint);
+        canvas.save();
+        canvas.restore();*/
 
 
-
-
-
-        //расчёт смещения
-       /* if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
-            if(y1==0&&x1!=getWidth()+1){
-                x1+=10;
+        for (int i = (int) x; i <= y+image.getHeight(); i++) {
+            for (int j = (int) y; j <= y+image.getWidth(); j++) {
+                double radius=Math.sqrt((i-middle_x)*(i-middle_x)+(j-middle_y)*(j-middle_y));
+                double i1=((i)+radius*Math.cos(radian));
+                double j1=((j)+radius*Math.sin(radian));
+                paint.setColor(Color.YELLOW);
+                canvas.drawPoint((float) i1,(float) j1,paint);
+                int a = image_need_road.getPixel((int)i1,(int) j1);
+                if (a == -8248799) {
+                    x=400;
+                    y=400;
+                    break;
+                }
             }
-            if(x1==getWidth()&&y1<getHeight()+1){
-                y1+=10;
-            }
-            if(y1==getHeight()&&x1!=0){
-                x1-=10;
-            }
-            if(x==0&&y!=0){
-                y1-=10;
-            }
-            calculate();
-            x+=dx;
-            y+=dy;
+        }
 
+        /*double radius=Math.sqrt((206-middle_x)*(206-middle_x)+(205-middle_y)*(205-middle_y));
+        paint.setColor(Color.BLUE);
+        canvas.drawCircle(200+image.getWidth()/2,200+image.getHeight()/2,(float) radius,paint);*/
 
-        }*/
-        //calculate();
-        //x += dx;
-        //y += dy;
-
+        /*double i1=((200)+radius*Math.cos(radian));
+        double j1=((200+image.getHeight()/2)+radius*Math.sin(radian));
+        paint.setColor(Color.BLUE);
+        canvas.drawCircle((float) i1,(float)j1,10,paint);*/
     }
 
     private void calculate(){
