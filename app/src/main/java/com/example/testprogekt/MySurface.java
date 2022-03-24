@@ -47,7 +47,16 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     //объект потока
     DrawThread drawThread;
 
+    double deviation_degrees;
 
+    double radius_move;
+
+
+    double deviation_radian_wall;
+    double deviation_degrees_wall;
+
+    float middle_x;
+    float middle_y;
 
 
 
@@ -59,19 +68,30 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
         getHolder().addCallback(this);
 
+
+
         x = 400;
         y = 400;
 
         koeff = 2;
         res = getResources();
-        image = BitmapFactory.decodeResource(res, R.drawable.car);
+        image = BitmapFactory.decodeResource(res, R.drawable.car_real);
         image_real_road=BitmapFactory.decodeResource(res, R.drawable.firstroad);
         paint = new Paint();
         rect=new Rect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1);
         path=new Path();
-        x1=(x+image.getWidth() / 2)+400000*Math.cos(Math.toRadians(rotation_degrees-90));
-        y1=(y)+400000*Math.sin(Math.toRadians(rotation_degrees-90));
+        double deviation_radian=Math.atan((double) (image.getWidth()/2)/400);
+        deviation_degrees=Math.toDegrees(deviation_radian);
+
+        x1=(x+image.getWidth() / 2)+400*Math.cos(Math.toRadians(rotation_degrees-deviation_degrees+270));
+        y1=(y+image.getHeight()/2)+400*Math.sin(Math.toRadians(rotation_degrees-deviation_degrees+270));
+        radius_move=Math.sqrt(400*400+(image.getWidth()/2)*(image.getWidth()/2));
+
+        deviation_radian_wall=Math.atan((double) (image.getWidth()/2)/(double)(image.getHeight()/2));
+        deviation_degrees_wall=Math.toDegrees(deviation_radian_wall);
+
+
 
     }
 
@@ -97,27 +117,32 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         int wi=canvas.getWidth();
         int he=canvas.getHeight();
+        paint.setStyle(Paint.Style.STROKE);
         image_need_road=Bitmap.createScaledBitmap(image_real_road,wi,he,false);
 
         canvas.drawBitmap(image_need_road,0,0,paint);
-        HashMap<String,Integer> coord=new HashMap<>();
+
 
 
 
         paint.setColor(Color.RED);
         canvas.drawRect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1,paint);
-
-
-        double radian=Math.toRadians(rotation_degrees+270);
+        double radian;
+        radian=Math.toRadians(rotation_degrees-deviation_degrees+270);
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
             rotation_degrees+=2;
 
-            x1=(x+image.getWidth() / 2)+400000*Math.cos(radian);
-            y1=(y)+400000*Math.sin(radian);
+            x1=(x+image.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image.getHeight()/2)+radius_move*Math.sin(radian);
 
         }
-        //canvas.drawCircle((float) x1,(float) y1,10,paint);
+//        canvas.drawCircle((float) x+image.getWidth() / 2,(float)y+image.getHeight()/2,(float) radius_move,paint);
+//        canvas.drawCircle((float) x1,(float) y1,10,paint);
+//        path.moveTo((float) x+image.getWidth() / 2,(float)y+image.getHeight()/2);
+//        path.lineTo((float) x1,(float)y1);
+//        paint.setStyle(Paint.Style.STROKE);
+//        canvas.drawPath(path,paint);
 
 
 
@@ -126,33 +151,66 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
 
-        //paint.setColor(Color.RED);
-        //path.moveTo(0,50);
-        //path.lineTo(1000,50);
-       //paint.setStyle(Paint.Style.STROKE);
-        //canvas.drawPath(path,paint);
-        //canvas.drawCircle((float) x1,(float)y1,20,paint);
+        //
         //Rect r=new Rect((int)x,(int) y,(int) x+image.getHeight(),(int)y+image.getWidth());
-        Rect r=new Rect((int) x,(int) y,(int) x+image.getHeight(),(int) y+image.getWidth());
+//        Rect r=new Rect((int) x,(int) y,(int) x+image.getHeight(),(int) y+image.getWidth());
+//        paint.setColor(Color.RED);
+//        canvas.drawRect(r,paint);
+
+        double i1;
+        double j1;
+        int a;
+        middle_x=x+image.getWidth()/2;
+        middle_y=y+image.getHeight()/2;
+        double radius=Math.sqrt((x-middle_x)*(x-middle_x)+(y-middle_y)*(y-middle_y));
+
+        radian=Math.toRadians(rotation_degrees+270-deviation_degrees_wall);
+        canvas.drawCircle(middle_x,middle_y,(float) radius,paint);
+        i1=middle_x+radius*Math.cos(radian);
+        j1=middle_y+radius*Math.sin(radian);
+        paint.setColor(Color.YELLOW);canvas.drawPoint((float) i1,(float)j1,paint);
+         a= image_need_road.getPixel((int)i1,(int) j1);
         paint.setColor(Color.RED);
-        canvas.drawRect(r,paint);
-        float middle_x=x+image.getWidth()/2;
-        float middle_y=y+image.getHeight()/2;
-        for (int i = (int) x; i <= x+image.getHeight(); i++) {
-            for (int j = (int) y; j <= y+image.getWidth(); j++) {
-                double radius=Math.sqrt((i-middle_x)*(i-middle_x)+(j-middle_y)*(j-middle_y));
-                double i1=((i)+radius*Math.cos(radian));
-                double j1=((j)+radius*Math.sin(radian));
-                paint.setColor(Color.YELLOW);
-                canvas.drawPoint((float) i1,(float) j1,paint);
-                int a = image_need_road.getPixel((int)i1,(int) j1);
-                if (a == -8248799) {
-                    x=400;
-                    y=400;
-                    break;
-                }
-            }
+        if (a == -8248799) {
+            x=400;
+            y=400;
         }
+        radian=Math.toRadians(rotation_degrees+270+deviation_degrees_wall);
+        i1=middle_x+radius*Math.cos(radian);
+        j1=middle_y+radius*Math.sin(radian);
+        paint.setColor(Color.YELLOW);
+        canvas.drawPoint((float) i1,(float)j1,paint);
+        a = image_need_road.getPixel((int)i1,(int) j1);
+        paint.setColor(Color.RED);
+        if (a == -8248799) {
+            x=400;
+            y=400;
+        }
+        radian=Math.toRadians(rotation_degrees+90+deviation_degrees_wall);
+        i1=middle_x+radius*Math.cos(radian);
+        j1=middle_y+radius*Math.sin(radian);
+        paint.setColor(Color.YELLOW);
+        canvas.drawPoint((float) i1,(float)j1,paint);
+        a = image_need_road.getPixel((int)i1,(int) j1);
+        paint.setColor(Color.RED);
+        if (a == -8248799) {
+            x=400;
+            y=400;
+        }
+        radian=Math.toRadians(rotation_degrees+90-deviation_degrees_wall);
+        i1=middle_x+radius*Math.cos(radian);
+        j1=middle_y+radius*Math.sin(radian);
+        paint.setColor(Color.YELLOW);
+        canvas.drawPoint((float) i1,(float)j1,paint);
+        a = image_need_road.getPixel((int)i1,(int) j1);
+        paint.setColor(Color.RED);
+        if (a == -8248799) {
+            x=400;
+            y=400;
+        }
+        // canvas.drawCircle((float) x1,(float)y1,20,paint);
+
+
 
         calculate();
         x += dx;
@@ -192,7 +250,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         dx = (float) (koeff*(x1-x)/g);
         dy = (float) (koeff*(y1-y)/g);
     }
-    /*private double[] pointsOnCircle(double begin_x,double begin_y){
+    private double[] pointsOnCircle(double begin_x,double begin_y){
         double[] a=new double[360];
         int i=0;
         for (int j = 0; j < 360; j++) {
@@ -200,7 +258,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
             double y_point=(begin_y)+400*Math.sin(j);
         }
         return a;
-    }*/
+    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
