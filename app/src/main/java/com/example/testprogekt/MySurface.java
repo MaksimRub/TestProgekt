@@ -73,7 +73,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         x = 400;
         y = 400;
 
-        koeff = 2;
+        koeff = 4;
         res = getResources();
         image = BitmapFactory.decodeResource(res, R.drawable.car_real);
         image_real_road=BitmapFactory.decodeResource(res, R.drawable.firstroad);
@@ -84,8 +84,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         double deviation_radian=Math.atan((double) (image.getWidth()/2)/400);
         deviation_degrees=Math.toDegrees(deviation_radian);
 
-        x1=(x+image.getWidth() / 2)+400*Math.cos(Math.toRadians(rotation_degrees-deviation_degrees+270));
-        y1=(y+image.getHeight()/2)+400*Math.sin(Math.toRadians(rotation_degrees-deviation_degrees+270));
+        x1=(x+image.getWidth() / 2)+400*Math.cos(Math.toRadians(rotation_degrees+270));
+        y1=(y+image.getHeight()/2)+400*Math.sin(Math.toRadians(rotation_degrees+270));
         radius_move=Math.sqrt(400*400+(image.getWidth()/2)*(image.getWidth()/2));
 
         deviation_radian_wall=Math.atan((double) (image.getWidth()/2)/(double)(image.getHeight()/2));
@@ -129,7 +129,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawRect(getWidth()-getWidth()/4,
                 getHeight()-getHeight()/8,getWidth()-1,getHeight()-1,paint);
         double radian;
-        radian=Math.toRadians(rotation_degrees-deviation_degrees+270);
+        radian=Math.toRadians(rotation_degrees+270);
         if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
             rotation_degrees+=2;
 
@@ -246,9 +246,9 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void calculate(){
-        double g = Math.sqrt((x1-x)*(x1-x)+(y1-y)*(y1-y));
-        dx = (float) (koeff*(x1-x)/g);
-        dy = (float) (koeff*(y1-y)/g);
+        double g = Math.sqrt((x1-middle_x)*(x1-middle_x)+(y1-middle_y)*(y1-middle_y));
+        dx = (float) (koeff*(x1-middle_x)/g);
+        dy = (float) (koeff*(y1-middle_y)/g);
     }
     private double[] pointsOnCircle(double begin_x,double begin_y){
         double[] a=new double[360];
