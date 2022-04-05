@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -27,222 +29,198 @@ import java.util.LinkedList;
 public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     //Переменные для рисования
     float x, y; //текущее положение картинки
-    double tx, ty; //точки касания
     float dx, dy; //смещение координат
     float koeff; //коэффициент скорости
 
-    Path path;
+    double rotation_degrees=0; //угол поворота
 
-   double rotation_degrees=0;
+    boolean button_state_toRight=false; //состояние кнопки "поворот направо"
+    boolean button_state_toLeft=false; //состояние кнопки "поворот налево"
 
-    double x1,y1;
+    int numberOfPicture; //номер выбранной трассы
 
-    Rect rect;
+    boolean picture_road_state=false; //создана-ли трасса нужных размеров
+    boolean picture_car_state=false; //создана-ли машинка нужных размеров
+
+    double x1,y1; //точки в которые необходимо прийти
 
     //переменные для картинки
-    Bitmap image,image_real_road,image_need_road;
+    Bitmap image_car,image_real_car,image_road1,image_real_road,image_road2,image_road3;
     Resources res;
     Paint paint;
 
-    //объект потока
-    DrawThread drawThread;
 
-    double deviation_degrees;
+    DrawThread drawThread; //объект потока
 
-    double radius_move;
+    double radius_move; //радиус по которому движется точки(в которую нужно прийти)
 
+    double deviation_degrees_wall; //угол для расчета координат углов треугольника
 
-    double deviation_radian_wall;
-    double deviation_degrees_wall;
-
-    float middle_x;
-    float middle_y;
+    float middle_x; //середина картинки по x
+    float middle_y; //середина картинки по y
 
 
-
-
-
-
-    public MySurface(Context context) {
-        super(context);
+    public MySurface(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
         getHolder().addCallback(this);
 
-
-
         x = 400;
-        y = 400;
+        y = 410;
 
         koeff = 4;
+
         res = getResources();
-        image = BitmapFactory.decodeResource(res, R.drawable.car_real);
-        image_real_road=BitmapFactory.decodeResource(res, R.drawable.firstroad);
+
+        image_car=BitmapFactory.decodeResource(res,R.drawable.norm_car);
+        image_road1=BitmapFactory.decodeResource(res, R.drawable.firstroad);
+        image_road2=BitmapFactory.decodeResource(res,R.drawable.norm_road);
         paint = new Paint();
-        rect=new Rect(getWidth()-getWidth()/4,
-                getHeight()-getHeight()/8,getWidth()-1,getHeight()-1);
-        path=new Path();
-        double deviation_radian=Math.atan((double) (image.getWidth()/2)/400);
-        deviation_degrees=Math.toDegrees(deviation_radian);
-
-        x1=(x+image.getWidth() / 2)+400*Math.cos(Math.toRadians(rotation_degrees+270));
-        y1=(y+image.getHeight()/2)+400*Math.sin(Math.toRadians(rotation_degrees+270));
-        radius_move=Math.sqrt(400*400+(image.getWidth()/2)*(image.getWidth()/2));
-
-        deviation_radian_wall=Math.atan((double) (image.getWidth()/2)/(double)(image.getHeight()/2));
-        deviation_degrees_wall=Math.toDegrees(deviation_radian_wall);
 
 
 
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if(event.getAction()==MotionEvent.ACTION_DOWN){
-            tx = event.getX();
-            ty = event.getY();
-        }
-        if(event.getAction()==MotionEvent.ACTION_UP){
-            tx=0;
-            ty=0;
-        }
-
-
-
-        return true;
     }
 
 
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
-        int wi=canvas.getWidth();
-        int he=canvas.getHeight();
-        paint.setStyle(Paint.Style.STROKE);
-        image_need_road=Bitmap.createScaledBitmap(image_real_road,wi,he,false);
-
-        canvas.drawBitmap(image_need_road,0,0,paint);
-
-
-
-
-        paint.setColor(Color.RED);
-        canvas.drawRect(getWidth()-getWidth()/4,
-                getHeight()-getHeight()/8,getWidth()-1,getHeight()-1,paint);
-        double radian;
-        radian=Math.toRadians(rotation_degrees+270);
-        if(tx>getWidth()-getWidth()/4&&tx<getWidth()-1&&ty>getHeight()-getHeight()/8&&ty<getHeight()-1){
-            rotation_degrees+=2;
-
-            x1=(x+image.getWidth() / 2)+radius_move*Math.cos(radian);
-            y1=(y+image.getHeight()/2)+radius_move*Math.sin(radian);
+        if(numberOfPicture==1 && !picture_road_state) {
+            int wi = canvas.getWidth();
+            int he = canvas.getHeight();
+            image_real_road = Bitmap.createScaledBitmap(image_road1, wi, he, false);
+            picture_road_state=true;
 
         }
-//        canvas.drawCircle((float) x+image.getWidth() / 2,(float)y+image.getHeight()/2,(float) radius_move,paint);
-//        canvas.drawCircle((float) x1,(float) y1,10,paint);
-//        path.moveTo((float) x+image.getWidth() / 2,(float)y+image.getHeight()/2);
-//        path.lineTo((float) x1,(float)y1);
-//        paint.setStyle(Paint.Style.STROKE);
-//        canvas.drawPath(path,paint);
+        if(numberOfPicture==2 && !picture_road_state) {
+            int wi = canvas.getWidth();
+            int he = canvas.getHeight();
+            image_real_road= Bitmap.createScaledBitmap(image_road2, wi, he, false);
+            picture_road_state=true;
 
 
+        }
+        if(numberOfPicture==3 && !picture_road_state) {
+            int wi = canvas.getWidth();
+            int he = canvas.getHeight();
+            image_real_road = Bitmap.createScaledBitmap(image_road3, wi, he, false);
+            picture_road_state=true;
 
 
+        }
+        canvas.drawBitmap(image_real_road, 0, 0, paint);
 
+        if (!picture_car_state){
+            int wi = canvas.getWidth();
+            int he = canvas.getHeight();
+            double ratio=wi/he; //соотношение сторон телефона
+            int he_car=(int) (he/5.5)+10;
+            int wi_car=wi/(int)ratio/11;
+            image_real_car=Bitmap.createScaledBitmap(image_car,wi_car,he_car,false);
+            x1=(x+ image_real_car.getWidth() / 2)+40000*Math.cos(Math.toRadians(rotation_degrees+270));
+            y1=(y+ image_real_car.getHeight()/2)+40000*Math.sin(Math.toRadians(rotation_degrees+270));
 
+            radius_move=Math.sqrt(40000*40000+( image_real_car.getWidth()/2)*( image_real_car.getWidth()/2));
 
+            double deviation_radian_wall=Math.atan((double) (image_real_car.getWidth()/2)/(double)(image_real_car.getHeight()/2));
+            deviation_degrees_wall=Math.toDegrees(deviation_radian_wall);
+            picture_car_state=true;
+        }
 
-        //
-        //Rect r=new Rect((int)x,(int) y,(int) x+image.getHeight(),(int)y+image.getWidth());
-//        Rect r=new Rect((int) x,(int) y,(int) x+image.getHeight(),(int) y+image.getWidth());
-//        paint.setColor(Color.RED);
-//        canvas.drawRect(r,paint);
+        double radian;
+        radian=Math.toRadians(rotation_degrees+270);
 
-        double i1;
-        double j1;
-        int a;
-        middle_x=x+image.getWidth()/2;
-        middle_y=y+image.getHeight()/2;
+        if (button_state_toRight){
+            rotation_degrees+=2;
+
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
+
+        }
+        if (button_state_toLeft){
+            rotation_degrees-=2;
+
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
+
+        }
+
+        double coordinateAnglePictureX; //координаты углов машинки по x
+        double coordinateAnglePictureY; //координаты углов машинки по y
+        int colorInAngelPicture; //цвет (числом) в углах машинки
+        middle_x=x+image_real_car.getWidth()/2;
+        middle_y=y+image_real_car.getHeight()/2;
         double radius=Math.sqrt((x-middle_x)*(x-middle_x)+(y-middle_y)*(y-middle_y));
 
         radian=Math.toRadians(rotation_degrees+270-deviation_degrees_wall);
         canvas.drawCircle(middle_x,middle_y,(float) radius,paint);
-        i1=middle_x+radius*Math.cos(radian);
-        j1=middle_y+radius*Math.sin(radian);
-        paint.setColor(Color.YELLOW);canvas.drawPoint((float) i1,(float)j1,paint);
-         a= image_need_road.getPixel((int)i1,(int) j1);
+        coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
+        coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
+        paint.setColor(Color.YELLOW);canvas.drawPoint((float) coordinateAnglePictureX,(float)coordinateAnglePictureY,paint);
+         colorInAngelPicture= image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
-        if (a == -8248799) {
+        if (colorInAngelPicture == -4894906) {
             x=400;
-            y=400;
+            y=410;
+            rotation_degrees=0;
+            radian=Math.toRadians(rotation_degrees+270);
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
         radian=Math.toRadians(rotation_degrees+270+deviation_degrees_wall);
-        i1=middle_x+radius*Math.cos(radian);
-        j1=middle_y+radius*Math.sin(radian);
+        coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
+        coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
         paint.setColor(Color.YELLOW);
-        canvas.drawPoint((float) i1,(float)j1,paint);
-        a = image_need_road.getPixel((int)i1,(int) j1);
+        canvas.drawPoint((float) coordinateAnglePictureX,(float)coordinateAnglePictureY,paint);
+        colorInAngelPicture= image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
-        if (a == -8248799) {
+        if (colorInAngelPicture == -4894906) {
             x=400;
-            y=400;
+            y=440;
+            rotation_degrees=0;
+            radian=Math.toRadians(rotation_degrees+270);
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
         radian=Math.toRadians(rotation_degrees+90+deviation_degrees_wall);
-        i1=middle_x+radius*Math.cos(radian);
-        j1=middle_y+radius*Math.sin(radian);
+        coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
+        coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
         paint.setColor(Color.YELLOW);
-        canvas.drawPoint((float) i1,(float)j1,paint);
-        a = image_need_road.getPixel((int)i1,(int) j1);
+        canvas.drawPoint((float) coordinateAnglePictureX,(float)coordinateAnglePictureY,paint);
+        colorInAngelPicture = image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
-        if (a == -8248799) {
+        if (colorInAngelPicture == -4894906) {
             x=400;
-            y=400;
+            y=440;
+            rotation_degrees=0;
+            radian=Math.toRadians(rotation_degrees+270);
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
         radian=Math.toRadians(rotation_degrees+90-deviation_degrees_wall);
-        i1=middle_x+radius*Math.cos(radian);
-        j1=middle_y+radius*Math.sin(radian);
+        coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
+        coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
         paint.setColor(Color.YELLOW);
-        canvas.drawPoint((float) i1,(float)j1,paint);
-        a = image_need_road.getPixel((int)i1,(int) j1);
+        canvas.drawPoint((float) coordinateAnglePictureX,(float)coordinateAnglePictureY,paint);
+        colorInAngelPicture = image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
-        if (a == -8248799) {
+        if (colorInAngelPicture == -4894906) {
             x=400;
-            y=400;
+            y=440;
+            rotation_degrees=0;
+            radian=Math.toRadians(rotation_degrees+270);
+            x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
+            y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
-        // canvas.drawCircle((float) x1,(float)y1,20,paint);
-
-
 
         calculate();
         x += dx;
         y += dy;
-        canvas.rotate((float) rotation_degrees, x+image.getWidth() / 2 , y+image.getHeight()/2 );
-        canvas.drawBitmap(image, x, y, paint);
+        canvas.rotate((float) rotation_degrees, x+image_real_car.getWidth() / 2 , y+image_real_car.getHeight()/2 );
+        canvas.drawBitmap(image_real_car, x, y, paint);
         canvas.save();
         canvas.restore();
-
-
-
-
-
-
-        //
-        //canvas.rotate((float) rotation_degrees, 200+image.getWidth() / 2 , 200+image.getHeight()/2 );
-
-        //canvas.save();
-        //canvas.restore();
-
-
-
-
-
-        /*double radius=Math.sqrt((206-middle_x)*(206-middle_x)+(205-middle_y)*(205-middle_y));
-        paint.setColor(Color.BLUE);
-        canvas.drawCircle(200+image.getWidth()/2,200+image.getHeight()/2,(float) radius,paint);*/
-
-        /*double i1=((200)+radius*Math.cos(radian));
-        double j1=((200+image.getHeight()/2)+radius*Math.sin(radian));
-        paint.setColor(Color.BLUE);
-        canvas.drawCircle((float) i1,(float)j1,10,paint);*/
     }
 
     private void calculate(){
@@ -250,14 +228,17 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         dx = (float) (koeff*(x1-middle_x)/g);
         dy = (float) (koeff*(y1-middle_y)/g);
     }
-    private double[] pointsOnCircle(double begin_x,double begin_y){
-        double[] a=new double[360];
-        int i=0;
-        for (int j = 0; j < 360; j++) {
-            double x_point=(begin_x)+400*Math.cos(j);
-            double y_point=(begin_y)+400*Math.sin(j);
-        }
-        return a;
+
+    public void setButton_state_toRight(boolean button_state_toRight) {
+        this.button_state_toRight = button_state_toRight;
+    }
+
+    public void setButton_state_toLeft(boolean button_state_toLeft) {
+        this.button_state_toLeft = button_state_toLeft;
+    }
+
+    public void setNumberOfPicture(int numberOfPicture) {
+        this.numberOfPicture = numberOfPicture;
     }
 
     @Override

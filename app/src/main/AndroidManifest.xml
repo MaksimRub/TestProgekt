@@ -10,10 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestProgekt">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainScreen"
             android:exported="true"
-            android:screenOrientation="landscape"
-            >
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +20,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".GameScreen"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ChoiceScreen"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+
+
     </application>
 
 </manifest>
