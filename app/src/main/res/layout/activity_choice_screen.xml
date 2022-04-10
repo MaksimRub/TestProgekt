@@ -9,9 +9,10 @@
     tools:context=".ChoiceScreen">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="5dp"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/layout1">
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -19,15 +20,19 @@
             android:layout_marginLeft="4dp"
             android:layout_weight="1"
             android:background="@color/teal_700"
+            android:scaleType="fitXY"
             android:id="@+id/image1"/>
+
         <ImageButton
+            android:id="@+id/image2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginTop="4dp"
             android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
             android:background="@color/teal_700"
-            android:id="@+id/image2"/>
+            android:scaleType="fitXY" />
+
         <ImageButton
             android:layout_weight="1"
             android:layout_width="wrap_content"
@@ -36,6 +41,7 @@
             android:layout_marginRight="4dp"
             android:background="@color/black"
             android:layout_marginLeft="4dp"
+            android:scaleType="fitXY"
             android:id="@+id/image3"/>
     </LinearLayout>
 
@@ -44,7 +50,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.15"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <TextView
             android:id="@+id/head1"

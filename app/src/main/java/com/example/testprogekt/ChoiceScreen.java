@@ -18,11 +18,13 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class ChoiceScreen extends AppCompatActivity {
     ImageButton picture1,picture2,picture3;
     Bitmap image_road1,image_road2,image_road3;
-    Bitmap image_real_road1,image_real_road2,image_real_road3;
+    LinearLayout linearLayout;
+
 
     Resources res;
     @Override
@@ -35,37 +37,16 @@ public class ChoiceScreen extends AppCompatActivity {
         picture1=findViewById(R.id.image1);
         picture2=findViewById(R.id.image2);
         picture3=findViewById(R.id.image3);
+        linearLayout=findViewById(R.id.layout1);
         //TODO доделать картинки трас и их описание
             //picture1.setImageBitmap();
             //picture2.setImageBitmap();
             //picture3.setImageBitmap();
         res=getResources();
         image_road2=BitmapFactory.decodeResource(res,R.drawable.norm_road);
-        picture2.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                picture2.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int width=picture2.getWidth();
-                int height=picture2.getHeight();
-                picture2.setMaxHeight(height);
-                picture2.setMaxWidth(width);
-                image_real_road2=Bitmap.createScaledBitmap(image_road2,width,height,false);
-                picture2.setImageBitmap(image_real_road2);
-                picture2.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-            }
-        });
-       /* picture2.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                int width=picture2.getWidth();
-                int height=picture2.getHeight();
-                image_real_road2=Bitmap.createScaledBitmap(image_road2,width,height,false);
-                picture2.setImageBitmap(image_real_road2);
-                picture2.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });*/
+        picture2.setImageBitmap(image_road2);
+        picture1.setImageBitmap(image_road2);
+        picture3.setImageBitmap(image_road2);
         picture1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -29,6 +29,7 @@ import java.util.LinkedList;
 public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     //Переменные для рисования
     float x, y; //текущее положение картинки
+    float begin_x,begin_y; //начальные координаты картинки
     float dx, dy; //смещение координат
     float koeff; //коэффициент скорости
 
@@ -41,6 +42,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     boolean picture_road_state=false; //создана-ли трасса нужных размеров
     boolean picture_car_state=false; //создана-ли машинка нужных размеров
+    boolean picture_car_position=false; //вычисление координат изначального расположения картинки
 
     double x1,y1; //точки в которые необходимо прийти
 
@@ -65,8 +67,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
         getHolder().addCallback(this);
 
-        x = 400;
-        y = 410;
+        x = 200;
+        y = 600;
 
         koeff = 4;
 
@@ -110,6 +112,30 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
         }
         canvas.drawBitmap(image_real_road, 0, 0, paint);
+        if (!picture_car_position){
+            int wi = canvas.getWidth();
+            int he = canvas.getHeight();
+            int middleOfPictureHeight=he/2;
+            int left_edge=0;
+            int right_edge=0;
+            for (int i = 0; i <=wi ; i++) {
+                int color1=image_real_road.getPixel(i,middleOfPictureHeight);
+                int color2=image_real_road.getPixel(i+1,middleOfPictureHeight);
+                if(color1!=-1&&color2==-1 ){
+                    left_edge=i;
+                }
+                if (color1==-1&&color2!=-1){
+                    right_edge=i+1;
+                    break;
+                }
+            }
+            begin_x=(right_edge-left_edge)/2;
+            begin_y=middleOfPictureHeight;
+            x=begin_x;
+            y=begin_y;
+            picture_car_position=true;
+
+        }
 
         if (!picture_car_state){
             int wi = canvas.getWidth();
