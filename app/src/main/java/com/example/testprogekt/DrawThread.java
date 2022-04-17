@@ -32,7 +32,7 @@ public class DrawThread extends Thread {
             canvas = null;
             nowTime = System.currentTimeMillis();
             ellapsedTime = nowTime - prevTime;
-            if (ellapsedTime > 60){
+            if (ellapsedTime > 8){
                 prevTime = nowTime;
                 canvas = surfaceHolder.lockCanvas(null);
                 synchronized (surfaceHolder){

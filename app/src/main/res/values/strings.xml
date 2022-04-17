@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">TestProgekt</string>
+    <string name="winner">Победитель</string>
+    <string name="colon">:</string>
 
 
 </resources>

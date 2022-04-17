@@ -32,11 +32,17 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     float begin_x,begin_y; //начальные координаты картинки
     float dx, dy; //смещение координат
     float koeff; //коэффициент скорости
+    GameScreen gameScreen;
+
+    int counter_touch=0;
+
+    int counter_frames=0;
 
     double rotation_degrees=0; //угол поворота
 
     boolean button_state_toRight=false; //состояние кнопки "поворот направо"
     boolean button_state_toLeft=false; //состояние кнопки "поворот налево"
+    boolean button_state_stop=false;
 
     int numberOfPicture; //номер выбранной трассы
 
@@ -70,7 +76,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         x = 200;
         y = 600;
 
-        koeff = 4;
+        koeff = 0;
 
         res = getResources();
 
@@ -162,6 +168,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
+            koeff-=0.05;
 
         }
         if (button_state_toLeft){
@@ -169,7 +176,14 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
+            koeff-=0.05;
+        }
+        if(button_state_stop && koeff>0.15){
 
+                koeff -= 0.15;
+
+        }else if(button_state_stop && koeff<0.15){
+            koeff=0;
         }
 
         double coordinateAnglePictureX; //координаты углов машинки по x
@@ -187,13 +201,37 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
          colorInAngelPicture= image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
         if (colorInAngelPicture == -4894906) {
-            x=400;
-            y=410;
-            rotation_degrees=0;
+            if (counter_touch>=3 ){
+                x=begin_x;
+                y=begin_y;
+                rotation_degrees=0;
+                counter_touch=0;
+                counter_frames=0;
+            }else{
+                rotation_degrees+=10;
+                counter_touch++;
+            }
             radian=Math.toRadians(rotation_degrees+270);
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
+
+        if(colorInAngelPicture==-1 && counter_frames>=30){
+            gameScreen.win();
+            boolean stop = true;
+            drawThread.setRun(false);
+            while(stop) {
+                try {
+                    drawThread.join();
+                    stop = false;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+
         radian=Math.toRadians(rotation_degrees+270+deviation_degrees_wall);
         coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
         coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
@@ -202,13 +240,38 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         colorInAngelPicture= image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
         if (colorInAngelPicture == -4894906) {
-            x=400;
-            y=440;
-            rotation_degrees=0;
+            if (counter_touch>=3 ){
+                x=begin_x;
+                y=begin_y;
+                rotation_degrees=0;
+                counter_touch=0;
+                counter_frames=0;
+            }else{
+                rotation_degrees-=10;
+                counter_touch++;
+            }
             radian=Math.toRadians(rotation_degrees+270);
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
         }
+
+
+        if(colorInAngelPicture==-1 && counter_frames>=30){
+            gameScreen.win();
+            boolean stop = true;
+            drawThread.setRun(false);
+            while(stop) {
+                try {
+                    drawThread.join();
+                    stop = false;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+
         radian=Math.toRadians(rotation_degrees+90+deviation_degrees_wall);
         coordinateAnglePictureX=middle_x+radius*Math.cos(radian);
         coordinateAnglePictureY=middle_y+radius*Math.sin(radian);
@@ -217,9 +280,16 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         colorInAngelPicture = image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
         if (colorInAngelPicture == -4894906) {
-            x=400;
-            y=440;
-            rotation_degrees=0;
+            if (counter_touch>=3 ){
+                x=begin_x;
+                y=begin_y;
+                rotation_degrees=0;
+                counter_touch=0;
+                counter_frames=0;
+            }else{
+                rotation_degrees-=1;
+                counter_touch++;
+            }
             radian=Math.toRadians(rotation_degrees+270);
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
@@ -232,9 +302,16 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         colorInAngelPicture = image_real_road.getPixel((int)coordinateAnglePictureX,(int) coordinateAnglePictureY);
         paint.setColor(Color.RED);
         if (colorInAngelPicture == -4894906) {
-            x=400;
-            y=440;
-            rotation_degrees=0;
+            if (counter_touch>=3 ){
+                x=begin_x;
+                y=begin_y;
+                rotation_degrees=0;
+                counter_touch=0;
+                counter_frames=0;
+            }else{
+                rotation_degrees+=1;
+                counter_touch++;
+            }
             radian=Math.toRadians(rotation_degrees+270);
             x1=(x+image_real_car.getWidth() / 2)+radius_move*Math.cos(radian);
             y1=(y+image_real_car.getHeight()/2)+radius_move*Math.sin(radian);
@@ -247,6 +324,10 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawBitmap(image_real_car, x, y, paint);
         canvas.save();
         canvas.restore();
+        counter_frames++;
+        if(koeff<4) {
+            koeff += 0.09;
+        }
     }
 
     private void calculate(){
@@ -291,6 +372,14 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setGameScreen(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
+    }
+
+    public void setButton_state_stop(boolean button_state_stop) {
+        this.button_state_stop = button_state_stop;
     }
 }
 
