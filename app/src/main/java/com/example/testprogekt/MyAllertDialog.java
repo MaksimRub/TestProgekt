@@ -23,10 +23,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Objects;
 
 public class MyAllertDialog extends AppCompatDialogFragment {
     Button exit,returns;
-    TextView tekstTime;
+    TextView textTime;
     String time;
     GameScreen gameScreen;
 
@@ -35,22 +36,21 @@ public class MyAllertDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Важное сообщение!")
-                .setMessage("Покормите кота!")
-                .setPositiveButton("остаться", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем окно
-                        dialog.cancel();
-                        gameScreen.choice(true);
-                    }
-                })
-                .setNegativeButton("выйти в меню", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                        gameScreen.choice(false);
-                    }
-                });
+        LayoutInflater inflater=getActivity().getLayoutInflater();
+        View view=inflater.inflate(R.layout.dialog,null);
+        builder.setView(view);
+        textTime=view.findViewById(R.id.time);
+        exit=view.findViewById(R.id.exit);
+        returns=view.findViewById(R.id.returnes);
+
+        textTime.setText("Вы проехали за "+time);
+        exit.setOnClickListener(view1 -> {
+            gameScreen.choice(true);
+        });
+        returns.setOnClickListener(view1 -> {
+            gameScreen.choice(false);
+            Objects.requireNonNull(getDialog()).cancel();
+        });
         return builder.create();
     }
     public void setTime(String time){

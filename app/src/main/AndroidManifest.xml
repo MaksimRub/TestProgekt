@@ -24,11 +24,11 @@
 
         <activity
             android:name=".GameScreen"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ChoiceScreen"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="landscape" />
 
 

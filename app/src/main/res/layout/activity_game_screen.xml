@@ -11,6 +11,16 @@
         android:id="@+id/mySurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#00018786"
+        android:gravity="center"
+        android:id="@+id/chronometer"
+        android:textSize="25sp" />
+
     <ImageButton
         android:id="@+id/stop"
         android:layout_width="75dp"

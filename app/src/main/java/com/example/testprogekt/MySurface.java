@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -217,18 +218,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         if(colorInAngelPicture==-1 && counter_frames>=30){
-            gameScreen.win();
-            boolean stop = true;
             drawThread.setRun(false);
-            while(stop) {
-                try {
-                    drawThread.join();
-                    stop = false;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            gameScreen.win();
         }
 
 
@@ -257,18 +248,8 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
         if(colorInAngelPicture==-1 && counter_frames>=30){
-            gameScreen.win();
-            boolean stop = true;
             drawThread.setRun(false);
-            while(stop) {
-                try {
-                    drawThread.join();
-                    stop = false;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            gameScreen.win();
         }
 
 
@@ -364,10 +345,13 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean stop = true;
         drawThread.setRun(false);
+        Log.d("THREAD", "Start to stop thread");
         while(stop) {
+
             try {
                 drawThread.join();
                 stop = false;
+                Log.d("THREAD", "Thread is stopped");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -380,6 +364,14 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setButton_state_stop(boolean button_state_stop) {
         this.button_state_stop = button_state_stop;
+    }
+    public  void setXY(){
+        x=begin_x;
+        y=begin_y;
+        drawThread.stop();
+        drawThread.setRun(true);
+        drawThread.start();
+
     }
 }
 
