@@ -13,12 +13,12 @@
         android:layout_height="match_parent" />
 
     <TextView
-        android:textColor="@color/white"
+        android:id="@+id/chronometer"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="#00018786"
         android:gravity="center"
-        android:id="@+id/chronometer"
+        android:textColor="@color/white"
         android:textSize="25sp" />
 
     <ImageButton
@@ -72,6 +72,18 @@
         android:text="Button"
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
+    <ImageButton
+        android:layout_width="75dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/leave"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:id="@+id/oops"/>
 
 
 </RelativeLayout>

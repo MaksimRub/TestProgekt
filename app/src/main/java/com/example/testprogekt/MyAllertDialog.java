@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,10 +33,18 @@ public class MyAllertDialog extends AppCompatDialogFragment {
     String time;
     GameScreen gameScreen;
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        Objects.requireNonNull(getDialog()).setCanceledOnTouchOutside(false);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater=getActivity().getLayoutInflater();
         View view=inflater.inflate(R.layout.dialog,null);
