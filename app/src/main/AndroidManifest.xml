@@ -9,19 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TestProgekt">
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".MainScreen"
             android:exported="true"
             android:screenOrientation="landscape">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".GameScreen"
             android:exported="true"
@@ -30,9 +32,6 @@
             android:name=".ChoiceScreen"
             android:exported="true"
             android:screenOrientation="landscape" />
-
-
-
     </application>
 
 </manifest>

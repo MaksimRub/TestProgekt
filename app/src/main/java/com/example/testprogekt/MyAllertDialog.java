@@ -29,9 +29,10 @@ import java.util.Objects;
 
 public class MyAllertDialog extends AppCompatDialogFragment {
     Button exit,returns;
-    TextView textTime;
+    TextView textTime,win;
     String time;
     GameScreen gameScreen;
+    boolean winner=false;
 
     @Nullable
     @Override
@@ -52,6 +53,12 @@ public class MyAllertDialog extends AppCompatDialogFragment {
         textTime=view.findViewById(R.id.time);
         exit=view.findViewById(R.id.exit);
         returns=view.findViewById(R.id.returnes);
+        win=view.findViewById(R.id.head);
+        if(winner){
+            win.setText("вы побили свой рекорд");
+        }else {
+            win.setText("старайтесь лучше");
+        }
 
         textTime.setText("Вы проехали за "+time);
         exit.setOnClickListener(view1 -> {
@@ -69,6 +76,10 @@ public class MyAllertDialog extends AppCompatDialogFragment {
 
     public void setGameScreen(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
     }
 }
 

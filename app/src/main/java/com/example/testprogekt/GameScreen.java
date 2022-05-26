@@ -3,19 +3,23 @@ package com.example.testprogekt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import hallianinc.opensource.timecounter.StopWatch;
 
 public class GameScreen extends AppCompatActivity {
-    ImageButton toRight,toLeft,stop,leave;
+    ImageButton toRight,toLeft,stop;
+    Button leave;
     MySurface mySurface;
     TextView chronometer,oops;
 
@@ -23,6 +27,8 @@ public class GameScreen extends AppCompatActivity {
     StopWatch stopWatch;
 
     DrawThread drawThread;
+
+    boolean winner=false;
 
 
     SharedPreferences preferences;
@@ -48,6 +54,8 @@ public class GameScreen extends AppCompatActivity {
         stop=findViewById(R.id.stop);
         leave=findViewById(R.id.leave);
 
+        startService(new Intent(this,MyService.class));
+
         mySurface=findViewById(R.id.mySurface);
         if (a == 0) {
             Intent intent=new Intent(GameScreen.this,MainScreen.class);
@@ -56,6 +64,7 @@ public class GameScreen extends AppCompatActivity {
         }
         mySurface.setNumberOfPicture(a);
         mySurface.setGameScreen(this);
+
         stopWatch=new StopWatch(chronometer);
 
 
@@ -99,10 +108,24 @@ public class GameScreen extends AppCompatActivity {
         });
         leave.setOnClickListener(v -> {
             drawThread.setRun(false);
+            mySurface.stopMusic();
             Intent intent=new Intent(getApplicationContext(),ChoiceScreen.class);
             startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.enter,R.anim.exit);
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        drawThread.setRun(false);
+        mySurface.stopMusic();
+        Intent intent=new Intent(getApplicationContext(),ChoiceScreen.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.enter,R.anim.exit);
     }
 
     @Override
@@ -113,6 +136,7 @@ public class GameScreen extends AppCompatActivity {
     }
 
     public void win() {
+        mySurface.stopMusic();
         stopWatch.pause();
         int min ;
         int sec ;
@@ -154,12 +178,15 @@ public class GameScreen extends AppCompatActivity {
                 if (millsec < millsec_old && min<=min_old && sec<=sec_old) {
                     editor.putString(Integer.toString(a), time);
                     editor.apply();
+                    winner=true;
                 }else if (sec < sec_old && min<=min_old) {
                     editor.putString(Integer.toString(a), time);
                     editor.apply();
+                    winner=true;
                 }else if(min<min_old){
                     editor.putString(Integer.toString(a), time);
                     editor.apply();
+                    winner=true;
                 }
 
             }
@@ -175,6 +202,7 @@ public class GameScreen extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         MyAllertDialog myAllertDialog = new MyAllertDialog();
         myAllertDialog.setTime(chronometer.getText().toString());
+        myAllertDialog.setWinner(winner);
         myAllertDialog.setGameScreen(this);
         myAllertDialog.show(manager, "победитель");
         }
@@ -186,16 +214,40 @@ public class GameScreen extends AppCompatActivity {
             Intent intent=new Intent(getApplicationContext(),ChoiceScreen.class);
             startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.enter,R.anim.exit);
         }else{
             Intent intent=new Intent(getApplicationContext(),GameScreen.class);
             intent.putExtra("NumberOfPicture",a);
             startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.enter,R.anim.exit);
 
         }
     }
 
     public void setDrawThread(DrawThread drawThread) {
         this.drawThread = drawThread;
+    }
+
+    public void setOops(String oops) {
+        this.oops.setText(oops);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        startService(new Intent(this,MyService.class));
+        Intent intent=new Intent(getApplicationContext(),GameScreen.class);
+        intent.putExtra("NumberOfPicture",a);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.enter,R.anim.exit);
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        drawThread.setRun(false);
+        mySurface.stopMusic();
+        super.onUserLeaveHint();
     }
 }

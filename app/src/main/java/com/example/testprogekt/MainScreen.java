@@ -23,6 +23,7 @@ public class MainScreen extends AppCompatActivity {
         if(a==-1){
             Toast.makeText(this, "что-то пошло не так", Toast.LENGTH_SHORT).show();
         }
+        startService(new Intent(this,MyService.class));
 
         enter=findViewById(R.id.enter);
         exit=findViewById(R.id.exit);
@@ -30,6 +31,7 @@ public class MainScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainScreen.this,ChoiceScreen.class));
+                overridePendingTransition(R.anim.enter,R.anim.exit);
             }
         });
         exit.setOnClickListener(new View.OnClickListener() {
@@ -40,4 +42,11 @@ public class MainScreen extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        startService(new Intent(this,MyService.class));
+    }
+
+
 }

@@ -7,10 +7,14 @@ import android.view.SurfaceHolder;
 public class DrawThread extends Thread {
     MySurface mySurface;
     SurfaceHolder surfaceHolder;
+
+
     boolean isRun = false;
+    boolean sleep=false;
+
     long nowTime, prevTime, ellapsedTime;
 
-    public DrawThread(MySurface mySurface, SurfaceHolder surfaceHolder) {
+    public DrawThread(MySurface mySurface, SurfaceHolder surfaceHolder,GameScreen gameScreen) {
         this.mySurface = mySurface;
         this.surfaceHolder = surfaceHolder;
         prevTime = System.currentTimeMillis();
@@ -26,6 +30,17 @@ public class DrawThread extends Thread {
     public void run() {
         Canvas canvas;
         while (isRun){
+
+            if(sleep){
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sleep=false;
+            }
+
+
             if (!surfaceHolder.getSurface().isValid()){
                 continue;
             }
@@ -44,4 +59,9 @@ public class DrawThread extends Thread {
             }
         }
     }
+
+    public void setSleep(boolean sleep) {
+        this.sleep = sleep;
+    }
+
 }
