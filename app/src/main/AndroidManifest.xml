@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.testprogekt">
+    package="com.example.CoolRacer">
 
     <application
         android:allowBackup="true"
@@ -10,12 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestProgekt">
         <service
-            android:name=".MyService"
+            android:name="com.example.CoolRacer.MyService"
             android:enabled="true"
             android:exported="true"></service>
 
         <activity
-            android:name=".MainScreen"
+            android:name="com.example.CoolRacer.MainScreen"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -25,11 +25,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameScreen"
+            android:name="com.example.CoolRacer.GameScreen"
             android:exported="true"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ChoiceScreen"
+            android:name="com.example.CoolRacer.ChoiceScreen"
             android:exported="true"
             android:screenOrientation="landscape" />
     </application>
