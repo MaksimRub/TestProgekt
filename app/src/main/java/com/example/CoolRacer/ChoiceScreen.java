@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class ChoiceScreen extends AppCompatActivity {
     ImageButton picture1,picture2,picture3;
-    Button enter;
+    Button enter,exit;
     Bitmap image_road1,image_road2,image_road3;
     int numberOfPicture=0;
     TextView image_road_time1,image_road_time2,image_road_time3;
@@ -47,10 +47,8 @@ public class ChoiceScreen extends AppCompatActivity {
         picture2 = findViewById(R.id.image2);
         picture3 = findViewById(R.id.image3);
         enter = findViewById(R.id.enter);
-        //TODO доделать картинки трас и их описание
-        //picture1.setImageBitmap();
-        //picture2.setImageBitmap();
-        //picture3.setImageBitmap();
+        exit=findViewById(R.id.exit);
+
         res = getResources();
 
         image_road1 = BitmapFactory.decodeResource(res, R.drawable.road_first_ikon);
@@ -61,7 +59,6 @@ public class ChoiceScreen extends AppCompatActivity {
         picture1.setImageBitmap(image_road1);
         picture2.setImageBitmap(image_road2);
         picture3.setImageBitmap(image_road3);
-        Log.i("Choise", "is Successful");
         picture1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,12 +113,18 @@ public class ChoiceScreen extends AppCompatActivity {
                 overridePendingTransition(R.anim.enter,R.anim.exit);
             }
         });
+        exit.setOnClickListener(v -> {
+            Intent intent=new Intent(ChoiceScreen.this,MainScreen.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.enter,R.anim.exit);
+        });
 
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        stopService(new Intent(this,MyService.class));
-        startService(new Intent(this,MyService.class));
+        startService(new Intent(ChoiceScreen.this,MyService.class));
     }
 }

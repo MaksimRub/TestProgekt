@@ -234,8 +234,7 @@ public class GameScreen extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        stopService(new Intent(this,MyService.class));
-        startService(new Intent(this,MyService.class));
+        startService(new Intent(GameScreen.this,MyService.class));
         Intent intent=new Intent(getApplicationContext(),GameScreen.class);
         intent.putExtra("NumberOfPicture",a);
         startActivity(intent);

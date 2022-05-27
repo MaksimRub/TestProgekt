@@ -282,6 +282,7 @@ public class MySurface extends SurfaceView implements SurfaceHolder.Callback {
                 x_picture_road=begin_x_picture_road;
                 y_picture_road=begin_y_picture_road;
                 rotation_degrees=0;
+                koeff=0;
                 counter_touch=0;
                 counter_frames=0;
             }else{

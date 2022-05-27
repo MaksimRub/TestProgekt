@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -30,6 +32,7 @@ public class MainScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainScreen.this,ChoiceScreen.class));
+                finish();
                 overridePendingTransition(R.anim.enter,R.anim.exit);
             }
         });
@@ -41,12 +44,10 @@ public class MainScreen extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        stopService(new Intent(this,MyService.class));
-        startService(new Intent(this,MyService.class));
+        startService(new Intent(MainScreen.this,MyService.class));
     }
-
-
 }

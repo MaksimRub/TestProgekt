@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 public class MyService extends Service {
     MediaPlayer mediaPlayer;
+    boolean state=false;
     public MyService() {
 
     }
@@ -25,18 +26,14 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if ((flags & START_FLAG_RETRY) == 0) {
-            mediaPlayer=MediaPlayer.create(this,R.raw.fon);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(2,2);
-            mediaPlayer.start();
-        }
-        else {
+        if (!state) {
             mediaPlayer=MediaPlayer.create(this,R.raw.fon);
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
+            state=true;
         }
-        return Service.START_STICKY;
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
 
